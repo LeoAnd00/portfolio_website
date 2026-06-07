@@ -1,361 +1,1330 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en">
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Leo Andrekson</title>
-	<link rel="shortcut icon" href="portfolio_icon.ico" type="image/x-icon">
-	<link rel="icon" href="portfolio_icon.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
-    <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/styles.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leo Andrekson — Computational Biotechnology</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:        #080d14;
+      --bg2:       #0d1520;
+      --bg3:       #111c2a;
+      --border:    rgba(80,180,160,0.12);
+      --border-hi: rgba(80,180,160,0.35);
+      --teal:      #50b4a0;
+      --teal-glow: rgba(80,180,160,0.18);
+      --teal-dim:  #2d7a6e;
+      --cyan:      #7ee8d4;
+      --text:      #d4e4e0;
+      --text-dim:  #6b8e88;
+      --text-mute: #3a5550;
+      --heading:   #eef5f3;
+      --serif:     'Times New Roman', Times, serif;
+      --mono:      'DM Mono', 'Fira Mono', monospace;
+      --sans:      'Outfit', sans-serif;
+      --radius:    6px;
+      --transition: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { color: var(--teal); text-decoration: none; transition: color var(--transition); }
+    a:hover { color: var(--cyan); }
+    ::selection { background: var(--teal-dim); color: #fff; }
+
+    /* ── BACTERIA SPLASH ── */
+    #bacteria-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.9s ease, visibility 0.9s ease;
+    }
+    #bacteria-splash.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    #bacteria-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .splash-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      pointer-events: none;
+    }
+    .splash-name {
+      font-family: var(--serif);
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      color: var(--heading);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 1s 0.5s ease forwards;
+    }
+    .splash-name em { color: var(--teal); font-style: italic; }
+    .splash-role {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--teal);
+      opacity: 0;
+      animation: fadeUp 1s 0.85s ease forwards;
+      margin-bottom: 2.5rem;
+    }
+    .splash-enter {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.7rem 2rem;
+      border: 1px solid var(--border-hi);
+      border-radius: var(--radius);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--teal);
+      cursor: pointer;
+      background: rgba(80,180,160,0.07);
+      transition: all 0.3s ease;
+      opacity: 0;
+      animation: fadeUp 1s 1.3s ease forwards;
+      pointer-events: all;
+    }
+    .splash-enter:hover {
+      background: var(--teal-glow);
+      border-color: var(--teal);
+      box-shadow: 0 0 24px var(--teal-glow);
+    }
+    .splash-enter .arrow {
+      display: inline-block;
+      animation: bounce 1.4s 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(4px); }
+    }
+
+    /* ── BACKGROUND PARTICLES ── */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 60px;
+      background: rgba(8,13,20,0.78);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      color: var(--heading);
+    }
+    .nav-logo span { color: var(--teal); }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: var(--teal); }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 6vw 6rem;
+      overflow: hidden;
+    }
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s ease forwards;
+    }
+    .hero-name {
+      font-family: var(--serif);
+      font-size: clamp(3.2rem, 8vw, 7.5rem);
+      line-height: 1.05;
+      color: var(--heading);
+      letter-spacing: -0.01em;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.35s ease forwards;
+    }
+    .hero-name em { font-style: italic; color: var(--teal); }
+    .hero-subtitle {
+      margin-top: 1.5rem;
+      font-size: 1.05rem;
+      color: var(--text-dim);
+      max-width: 560px;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.5s ease forwards;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 1.2rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.65s ease forwards;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      border-radius: var(--radius);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--teal); color: var(--bg); border-color: var(--teal); }
+    .btn-primary:hover {
+      background: var(--cyan); border-color: var(--cyan); color: var(--bg);
+      box-shadow: 0 0 28px rgba(80,180,160,0.35); transform: translateY(-2px);
+    }
+    .btn-secondary { background: transparent; color: var(--teal); border-color: var(--border-hi); }
+    .btn-secondary:hover {
+      background: var(--teal-glow); border-color: var(--teal); transform: translateY(-2px);
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem; left: 6vw;
+      display: flex; align-items: center; gap: 0.75rem;
+      font-family: var(--mono); font-size: 0.66rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-mute);
+      opacity: 0; animation: fadeIn 1s 1.2s forwards;
+    }
+    .scroll-line {
+      width: 40px; height: 1px; background: var(--text-mute);
+      animation: pulse-line 2s 1.5s ease-in-out infinite;
+    }
+    /* ── HERO STRUCTURAL FLEX LAYOUT ── */
+    .hero-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 5rem;
+      width: 100%;
+      max-width: 1100px;
+    }
+    .hero-content {
+      flex: 1.2;
+    }
+    .hero-image-wrapper {
+      flex: 0.8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.65s ease forwards;
+    }
+    
+    /* ── INTEGRATED BIO-FRAME ── */
+    .bio-frame {
+      position: relative;
+      padding: 12px;
+      background: rgba(13, 21, 32, 0.4); /* Matches --bg2 with transparency */
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: inset 0 0 20px rgba(80, 180, 160, 0.05), 0 10px 40px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+    .hero-profile-img {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      height: 360px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid rgba(80, 180, 160, 0.2);
+      filter: grayscale(15%) contrast(105%); /* Blends photograph tones into the dark theme */
+      transition: filter var(--transition), border-color var(--transition);
+    }
+    .bio-frame:hover .hero-profile-img {
+      filter: grayscale(0%) contrast(100%);
+      border-color: var(--teal);
+    }
+
+    /* Tech-styled corner brackets */
+    .frame-corner {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--teal);
+      z-index: 2;
+    }
+    .top-left     { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+    .top-right    { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+    .bottom-left  { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+    .bottom-right { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+    /* ── SECTION WRAPPER ── */
+    .section {
+      position: relative; z-index: 1;
+      padding: 6rem 6vw;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .section-header {
+      display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3.5rem;
+    }
+    .section-tag {
+      font-family: var(--mono); font-size: 0.68rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--teal); white-space: nowrap;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--heading);
+      font-style: italic;
+      line-height: 1.1;
+    }
+    .section-line { flex: 1; height: 1px; background: var(--border); margin-left: 0.5rem; }
+
+    /* ── ABOUT ── */
+    #about .about-grid {
+      display: grid; grid-template-columns: 1fr 340px;
+      gap: 4rem; align-items: start;
+    }
+    #about p { font-size: 1.05rem; line-height: 1.85; color: var(--text); margin-bottom: 1.2rem; }
+    .about-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.75rem;
+      position: sticky; top: 80px;
+    }
+    .about-card-row {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.65rem 0; border-bottom: 1px solid var(--border); font-size: 0.85rem;
+    }
+    .about-card-row:last-child { border-bottom: none; }
+    .about-card-row .icon {
+      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+      background: var(--teal-glow); border-radius: 50%; flex-shrink: 0; font-size: 0.75rem;
+    }
+    .about-card-label {
+      font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-mute); display: block;
+    }
+    .about-card-value { color: var(--text); font-size: 0.88rem; }
+
+    /* ── TIMELINE ── */
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before {
+      content: ''; position: absolute; left: 0; top: 8px; bottom: 0;
+      width: 1px; background: linear-gradient(to bottom, var(--teal), transparent);
+    }
+    .timeline-item {
+      position: relative; margin-bottom: 3rem;
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.6s var(--transition), transform 0.6s var(--transition);
+    }
+    .timeline-item.visible { opacity: 1; transform: translateY(0); }
+    .timeline-dot {
+      position: absolute; left: -2.4rem; top: 6px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--teal); border: 2px solid var(--bg); box-shadow: 0 0 10px var(--teal);
+    }
+    .timeline-meta {
+      font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em;
+      color: var(--teal); text-transform: uppercase; margin-bottom: 0.5rem;
+    }
+    .timeline-title { font-size: 1.1rem; font-weight: 500; color: var(--heading); margin-bottom: 0.15rem; }
+    .timeline-org { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 0.75rem; }
+    .timeline-body { font-size: 0.92rem; color: var(--text-dim); line-height: 1.75; }
+
+    /* ── EDUCATION ── */
+    .edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .edu-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.75rem;
+      transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+      opacity: 0; transform: translateY(20px);
+    }
+    .edu-card.visible { opacity: 1; transform: translateY(0); }
+    .edu-card:hover { border-color: var(--border-hi); box-shadow: 0 0 30px var(--teal-glow); transform: translateY(-4px); }
+    .edu-date { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.75rem; }
+    .edu-degree { font-size: 1rem; font-weight: 500; color: var(--heading); margin-bottom: 0.25rem; }
+    .edu-school { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 0.75rem; }
+    .edu-desc { font-size: 0.82rem; color: var(--text-mute); line-height: 1.65; }
+    .course-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+    .course-tag {
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.06em;
+      padding: 0.2rem 0.6rem; background: var(--teal-glow);
+      border: 1px solid var(--border-hi); border-radius: 3px; color: var(--cyan);
+    }
+
+    /* ── PUBLICATIONS ── */
+    .pub-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 2rem; display: flex; gap: 2rem; align-items: flex-start;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      opacity: 0; transform: translateY(20px);
+    }
+    .pub-card.visible { opacity: 1; transform: translateY(0); }
+    .pub-card:hover { border-color: var(--border-hi); box-shadow: 0 0 30px var(--teal-glow); }
+    .pub-badge {
+      flex-shrink: 0; width: 52px; height: 52px;
+      background: var(--teal-glow); border: 1px solid var(--border-hi);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .pub-label { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.5rem; }
+    .pub-title { font-size: 1rem; font-weight: 500; color: var(--heading); line-height: 1.45; margin-bottom: 0.5rem; }
+    .pub-authors { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.75rem; }
+
+    /* ── HONORS ── */
+    .honor-card {
+      display: flex; gap: 1.5rem; align-items: flex-start;
+      padding: 1.5rem; background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      opacity: 0; transform: translateY(20px);
+    }
+    .honor-card.visible { opacity: 1; transform: translateY(0); }
+    .honor-card:hover { border-color: var(--border-hi); box-shadow: 0 0 20px var(--teal-glow); }
+    .honor-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .honor-title { font-weight: 500; color: var(--heading); margin-bottom: 0.2rem; }
+    .honor-sub { font-size: 0.82rem; color: var(--text-dim); }
+    .honor-date { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; color: var(--teal); margin-bottom: 0.4rem; }
+
+    /* ── SKILLS ── */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+    .skill-group {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s var(--transition), transform 0.5s var(--transition), border-color var(--transition), box-shadow var(--transition);
+    }
+    .skill-group.visible { opacity: 1; transform: translateY(0); }
+    .skill-group:hover { border-color: var(--border-hi); box-shadow: 0 0 20px var(--teal-glow); }
+    .skill-group-title {
+      font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 1rem;
+      padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    }
+    .skill-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .skill-pill {
+      font-family: var(--mono); font-size: 0.72rem; padding: 0.3rem 0.75rem;
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; color: var(--text);
+      transition: all 0.2s ease;
+    }
+    .skill-pill:hover { border-color: var(--teal); color: var(--cyan); background: var(--teal-glow); }
+
+    /* ── ALUMNI ── */
+    .alumni-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .alumni-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.75rem; display: flex; gap: 1.25rem; align-items: flex-start;
+      transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+      opacity: 0; transform: translateY(20px);
+    }
+    .alumni-card.visible { opacity: 1; transform: translateY(0); }
+    .alumni-card:hover { border-color: var(--border-hi); box-shadow: 0 0 24px var(--teal-glow); transform: translateY(-3px); }
+    .alumni-avatar {
+      flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%;
+      background: var(--teal-glow); border: 1px solid var(--border-hi);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 1.1rem; color: var(--teal); font-style: italic;
+    }
+    .alumni-name { font-size: 1rem; font-weight: 500; color: var(--heading); margin-bottom: 0.2rem; }
+    .alumni-degree { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.4rem; }
+    .alumni-now { font-size: 0.82rem; color: var(--text-dim); }
+    .alumni-now strong { color: var(--text); }
+
+    /* ── CONTACT ── */
+    #contact { text-align: center; padding: 8rem 6vw; position: relative; z-index: 1; }
+    .contact-inner { max-width: 580px; margin: 0 auto; }
+    .contact-label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 1rem; }
+    .contact-heading { font-family: var(--serif); font-size: clamp(2.2rem, 5vw, 3.5rem); color: var(--heading); font-style: italic; margin-bottom: 1rem; line-height: 1.1; }
+    .contact-sub { color: var(--text-dim); margin-bottom: 2.5rem; font-size: 0.95rem; }
+    .contact-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem 6vw;
+      display: flex; justify-content: space-between; align-items: center;
+      position: relative; z-index: 1;
+      font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; color: var(--text-mute);
+    }
+
+    .divider { border: none; height: 1px; background: var(--border); max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes pulse-line { 0%,100% { width: 40px; opacity: 0.4; } 50% { width: 60px; opacity: 1; } }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 1.5rem; }
+      .nav-links { display: none; }
+      .hero-container {
+        flex-direction: column-reverse;
+        gap: 3rem;
+        text-align: center;
+        margin-top: 1rem;
+      }
+      .hero-image-wrapper {
+        width: 100%;
+        max-width: 260px;
+        margin: 0 auto;
+      }
+      .hero-profile-img {
+        height: 300px;
+      }
+      .hero-cta {
+        justify-content: center;
+      }
+      .hero-scroll {
+        display: none;
+      }
+      #about .about-grid { grid-template-columns: 1fr; }
+      .about-card { position: static; }
+      .section { padding: 4rem 1.5rem; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+      .pub-card { flex-direction: column; gap: 1rem; }
+    }
+  </style>
 </head>
-
 <body>
-    <div id="mobile-menu-open" class="shadow-large">
-        <i class="fa fa-bars" aria-hidden="true"></i>
-    </div>
-    <!-- End #mobile-menu-toggle -->
-    <header>
-        <div id="mobile-menu-close">
-            <span>Close</span> <i class="fa fa-times" aria-hidden="true"></i>
-        </div>
-        <ul id="menu" class="shadow" style="background-color: rgba(6, 72, 50, 0.8);">
-            <li>
-                <a href="#about">About</a>
-            </li>
-            <li>
-                <a href="#experience">Experience</a>
-            </li>
-            <li>
-                <a href="#education">Education</a>
-            </li>
-            <li>
-                <a href="#projects">Publications</a>
-            </li>
-            <li>
-                <a href="#honor_and_awards">Honors & Awards</a>
-            </li>
-            <li>
-                <a href="#skills">Skills</a>
-            </li>
-            <li>
-                <a href="#contact">Contact</a>
-            </li>
-        </ul>
-    </header>
-    <!-- End header -->
 
-    <div id="lead">
-        <div id="lead-content">
-            <h1>Leo Andrekson</h1>
-            <h2>Computational Biotechnology Engineer</h2>
-            <!--<a href="#" class="btn-rounded-white">Download Resume</a>-->
-        </div>
-        <!-- End #lead-content -->
+<!-- ═══════════════════════════════════════
+     BACTERIA SPLASH SCREEN
+═══════════════════════════════════════ -->
+<div id="bacteria-splash">
+  <canvas id="bacteria-canvas"></canvas>
+  <div class="splash-content">
+    <div class="splash-name">Leo <em>Andrekson</em></div>
+    <div class="splash-role">PhD · Biotechnology · AI</div>
+    <button class="splash-enter" id="splash-enter-btn">
+      Enter Portfolio <span class="arrow">↓</span>
+    </button>
+  </div>
+</div>
 
-        <div id="lead-overlay"></div>
+<!-- Background particles (visible after splash) -->
+<canvas id="bg-canvas"></canvas>
 
-        <div id="lead-down">
-            <span>
-                <i class="fa fa-chevron-down" aria-hidden="true"></i>
-            </span>
-        </div>
-        <!-- End #lead-down -->
-    </div>
-    <!-- End #lead -->
+<!-- ═══════════════════════════════════════
+     NAV
+═══════════════════════════════════════ -->
+<nav>
+  <div class="nav-logo">Leo <span>Andrekson</span></div>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#publications">Publications</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#alumni">Alumni</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
 
-    <div id="about">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h2 class="heading">About Me</h2>
-                </div>
-                <div class="col-md-8">
-                    <p>
-                        My name is Leo, and I am a civil engineer specializing in biotechnology, 
-                        based in Gothenburg, Sweden. I am dedicated to developing computational solutions 
-                        that address complex challenges. My expertise lies in problem-solving across diverse 
-                        domains, including data analysis, machine learning optimization, and the design of 
-                        innovative laboratory methodologies. I am driven by the pursuit of efficiency, accuracy, 
-                        and creativity in every project I undertake. 
-                        <br><br>
-                        Beyond my professional work, I maintain a strong connection to the outdoors, 
-                        which serves as a source of balance and inspiration. Whether walking along the coast, 
-                        swimming, or fishing, these activities provide both renewal and fresh perspectives 
-                        that I integrate into my professional practice. 
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End #about -->
-
-    <div id="experience" class="background-alt">
-        <h2 class="heading">Experience</h2>
-        <div id="experience-timeline">
-            <div data-date="October 2025 – Currently enrolled">
-                <h3>PhD Student – AI-Assisted Antibiotics Research</h3>
-                <h4>Chalmers University of Technology</h4>
-                <p>
-                    I am pursuing a PhD at Chalmers University of Technology, 
-                    focusing on the development of AI-assisted methods for advancing antibiotic 
-                    research. My work integrates computational modeling, machine learning, 
-                    and lab work to identify novel strategies in the fight against 
-                    antibiotic resistance. This research combines my engineering background 
-                    with cutting-edge artificial intelligence, aiming to improve the discovery 
-                    and optimization of effective treatments.  
-                </p>
-            </div>
-            <div data-date="September 2024 – October 2025">
-                <h3>Associate CQR Engineer</h3>
-                <h4>Capgemini Engineering</h4>
-                <p>
-                    I was part of a newly started compliance, quality, and regulatory 
-                    (CQR) management team at Capgemini Engineering. At 
-                    Capgemini I’ve had assignments where I’ve been working 
-                    with invoice management and case management. While 
-                    managing invoices, I’ve gained experience sending both debit 
-                    and credit invoices to clients, making me well-versed in the 
-                    client billing workflow. In addition, I’ve successfully 
-                    navigated the challenges of working with a new operational 
-                    system (built on Microsoft Dynamics 365), managing 
-                    unforeseen complexities and adapting to evolving processes. 
-                    This experience strengthened my ability to stay composed 
-                    under pressure, develop creative solutions, and improve 
-                    operational efficiency amidst uncertainty.  I’ve also taken 
-                    courses in ISO 9001, 13485, and 14001, GCP, GMP, MDR and 
-                    project management at Capgemini. 
-                </p>
-            </div>
-
-            <div data-date="September 2023 – Juni 2024">
-                <h3>Master's thesis in machine learning - 60 credits </h3>
-                <h4>Chalmers University of Technology</h4>
-                <p>
-                    I’ve been working on my master’s thesis in the <i>AI Laboratory for Molecular Engineering</i> (<a href="https://ailab.bio/" target="_blank"><i>AIME</i></a>) research group 
-                    at Chalmers where I’ve developed a machine learning model that utilizes contrastive learning to learn an 
-                    embedding space from scRNA-Seq data. I then used this space to perform downstream tasks, such as cell type 
-                    annotation and novel cell type detection. 
-                </p>
-            </div>
-
-            <div data-date="January 2024 – March 2024">
-                <h3>Planning research project</h3>
-                <h4>Chalmers University of Technology</h4>
-                <p>
-                    I was part of planning a research project at the department of <i>Biology and Biological Engineering, Division of Food and 
-                    Nutrition Science</i> at Chalmers University of Technology where we wanted to investigate if a certain protein found 
-                    in blood plasma has an impact on the risk of developing cognitive decline related conditions, such as Alzheimer’s 
-                    disease. 
-                </p>
-            </div>
-
-            <div data-date="June 2023 – July 2023">
-                <h3>Statistical programmer</h3>
-                <h4>AstraZeneca</h4>
-                <p>
-                    As a summer job, I was employed by Randstad to work at the department of <i>BioPharmaceuticals R&D | 
-                    Late-stage Development, Respiratory & Immunology | Biometrics</i> at AstraZeneca. The work mainly consisted of 
-                    quality controlling the descriptions of how variables are derived between different databases by implementing 
-                    them in SAS code. I mainly worked with groups in the USA and Sweden. 
-                </p>
-            </div>
-
-            <div data-date="June 2022 – July 2022">
-                <h3>Statistical programmer</h3>
-                <h4>AstraZeneca</h4>
-                <p>
-                    As a summer job, I was employed by Randstad to work at the department of <i>BioPharmaceuticals R&D | 
-                    Late-stage Development, Respiratory & Immunology | Biometrics</i> at AstraZeneca. I learned about various 
-                    different databases used in the design of questionnaires for patients and physicians for drug related studies, 
-                    such as ADAM, SDTM and RDS. I used this knowledge for organizing questionnaires for future studies. I also got 
-                    to practice on creating a SDTM database for a study using the SAS programming language. I mostly worked with 
-                    groups in the USA and Sweden. 
-                </p>
-            </div>
-
-            <div data-date="November 2021 – January 2022">
-                <h3>Teaching assistant</h3>
-                <h4>Chalmers University of Technology</h4>
-                <p>
-                    I worked as a TA in a linear algebra course (course code: MVE465) at Chalmers University of Technology where 
-                    I showed students how to program in MATLAB to illustrate and calculate complex linear algebraic problems. 
-                    I also helped students with problems in their codes and the mathematical understanding behind these. 
-                </p>
-            </div>
-
-            <div data-date="September 2021 – November 2021">
-                <h3>Teaching assistant</h3>
-                <h4>Chalmers University of Technology</h4>
-                <p>
-                    I worked as a TA in a single variable calculus and analytical geometry course (course code: MVE460) at 
-                    Chalmers University of Technology where I demonstrated how various problems can be solved with the course 
-                    material and helped students with questions regarding assignments, mathematical definitions, etc. 
-                </p>
-            </div>
-        </div>
-    </div>
-    <!-- End #experience -->
-
-    <div id="education">
-        <h2 class="heading">Education</h2>
-        <div class="education-block">
-            <h3>Master of Science in Biotechnology</h3>
-            <span class="education-date">September 2022 - June 2024</span>
-            <h4>Chalmers University of Technology</h4>
-            <p>
-                Profiling towards life science, bioinformatics and machine learning (through freestanding course).
-            </p>
-        </div>
-        <!-- End .education-block -->
-
-        <div class="education-block">
-            <h3>Freestanding Courses</h3>
-            <span class="education-date">September 2022 - June 2023</span>
-            <h4>Chalmers University of Technology</h4>
-            <p>
-                I took the following courses:
-            </p>
-            <ul>
-                <li>
-                    Artificial neural networks (FFR135)
-                </li>
-                <li>
-                    Advanced machine learning with neural networks (TIF360)
-                </li>
-                <li>
-                    Applied bioinformatics (BBT045)
-                </li>
-                <li>
-                    Metabolic engineering (KKR063)
-                </li>
-            </ul>
-        </div>
-
-        <div class="education-block">
-            <h3>Bachelor of Science in Biotechnology</h3>
-            <span class="education-date">September 2019 - June 2022</span>
-            <h4>Chalmers University of Technology</h4>
-        </div>
-        <!-- End .education-block -->
-    </div>
-    <!-- End #education -->
-
-    <div id="projects" class="background-alt">
-        <h2 class="heading">Publications</h2>
-        <div class="container">
-            <div class="row">
-                <div class="project shadow-large">
-                    <div class="project-image">
-                        <img src="images/robot_1.png" />
-                    </div>
-                    <!-- End .project-image -->
-                    <div class="project-info">
-                        <h3>Contrastive Learning for Robust Cell Annotation and Representation from Single-Cell Transcriptomics</h3>
-                        <p>
-                            Authors: Leo Andrekson & Rocío Mercado
-                        </p>
-                        <a href="https://doi.org/10.1101/2024.06.20.599868" target="_blank">View Publication</a>
-                    </div>
-                    <!-- End .project-info -->
-                </div>
-                <!-- End .project -->
-            </div>
-        </div>
-    </div>
-    <!-- End #projects -->
-
-    <div id="honor_and_awards">
-        <h2 class="heading">Honors & Awards</h2>
-        <div class="education-block">
-            <h3>Scholarship, Adlerbert foundations</h3>
-            <span class="education-date">September 2023</span>
-            <h4>Chalmers University of Technology</h4>
-            <p>
-                The selection process hinges on the relative academic excellence of applicants, predominantly gauged by their weighted average grade.
-            </p>
-        </div>
+<!-- ═══════════════════════════════════════
+     HERO
+═══════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-container">
+    
+    <div class="hero-content">
+      <div class="hero-label">PhD Student · Computational Biotechnologist</div>
+      <h1 class="hero-name">Leo<br><em>Andrekson</em></h1>
+      <p class="hero-subtitle">
+        Bridging AI and biology to fight antibiotic resistance —
+        developing machine learning frameworks for peptide discovery and conducting wet-lab validation
+        at Chalmers University of Technology.
+      </p>
+      <div class="hero-cta">
+        <a href="#contact" class="btn btn-primary">Get in Touch</a>
+        <a href="#about" class="btn btn-secondary">Explore</a>
+      </div>
     </div>
 
-    <div id="skills">
-        <h2 class="heading">Skills</h2>
-        <ul>
-            <li>Swedish</li>
-            <li>English</li>
-            <li>Python</li>
-            <li>JavaScript</li>
-            <li>HTML</li>
-            <li>CSS</li>
-            <li>MATLAB</li>
-            <li>Julia</li>
-            <li>R</li>
-            <li>SAS</li>
-            <li>SLURM</li>
-            <li>HPLC</li>
-            <li>GC-MS</li>
-            <li>SDS-Page</li>
-            <li>Gel electrophoresis</li>
-            <li>Cultivate cells</li>
-            <li>OD measuring</li>
-            <li>Genetic modification</li>
-            <li>Multichannel pipettes</li>
-            <li>Perform various chemical reactions</li>
-            <li>General laboratory experiences </li>
-        </ul>
+    <div class="hero-image-wrapper">
+      <div class="bio-frame">
+        <div class="frame-corner top-left"></div>
+        <div class="frame-corner top-right"></div>
+        <div class="frame-corner bottom-left"></div>
+        <div class="frame-corner bottom-right"></div>
+        <img src="profile-image.jpeg" alt="Leo Andrekson" class="hero-profile-img" />
+      </div>
     </div>
-    <!-- End #skills -->
 
-    <div id="contact">
-        <h2>Get in Touch</h2>
-        <div id="contact-form">
-            <button type="submit" onclick="window.location.href='mailto:leo.andrekson@gmail.com?subject=Contact request from portfolio website'">Send Email</button>
-        </div>
-        <!-- <div id="contact-form">
-            <form method="POST" action="https://formspree.io/leo.andrekson@gmail.com">
-                <input type="hidden" name="_subject" value="Contact request from personal website" />
-                <input type="email" name="_replyto" placeholder="Your email" required>
-                <textarea name="message" placeholder="Your message" required></textarea>
-                <button type="submit">Send</button>
-            </form>
-        </div>-->
-        <!-- End #contact-form -->
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Scroll to explore
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
+     ABOUT
+═══════════════════════════════════════ -->
+<section id="about" class="section">
+  <div class="section-header">
+    <span class="section-tag">01</span>
+    <h2 class="section-title">About Me</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div>
+      <p>
+        My name is Leo, and I am a civil engineer specializing in biotechnology, currently pursuing my PhD at Chalmers 
+        University of Technology in Gothenburg, Sweden. My research centers on developing AI-assisted methods to discover 
+        novel potentiators of antibiotics. By building machine learning frameworks to guide peptide selection and directly 
+        validating these models through hands-on wet-lab experimentation, my work aims to discover novel and effective antibiotic potentiators 
+        in the fight against antimicrobial resistance.
+      </p>
+      <p>
+        I am dedicated to developing end-to-end computational and biological solutions that address complex global challenges. 
+        My expertise spans data analysis, machine learning optimization, and the design of innovative laboratory methodologies—always 
+        driven by a pursuit of efficiency, accuracy, and scientific creativity. Beyond the bench, I really enjoy mentoring 
+        students and contributing to a collaborative, quality-driven research culture.
+      </p>
     </div>
-    <!-- End #contact -->
-
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-5 copyright">
-                    <p>
-                        Copyright &copy; <span id="current-year">2024</span> Leo Andrekson
-                    </p>
-                </div>
-                <div class="col-sm-2 top">
-                    <span id="to-top">
-                        <i class="fa fa-chevron-up" aria-hidden="true"></i>
-                    </span>
-                </div>
-                <div class="col-sm-5 social">
-                    <ul>
-                        <li>
-                            <a href="https://github.com/LeoAnd00" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
-                        </li>
-                        <li>
-                            <a href="https://www.linkedin.com/in/leo-andrekson-2966962b0/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+    <div class="about-card">
+      <div class="about-card-row">
+        <div class="icon">📍</div>
+        <div>
+          <span class="about-card-label">Location</span>
+          <span class="about-card-value">Gothenburg, Sweden</span>
         </div>
-    </footer>
-    <!-- End footer -->
+      </div>
+      <div class="about-card-row">
+        <div class="icon">🎓</div>
+        <div>
+          <span class="about-card-label">Role</span>
+          <span class="about-card-value">PhD Student</span>
+        </div>
+      </div>
+      <div class="about-card-row">
+        <div class="icon">🏛️</div>
+        <div>
+          <span class="about-card-label">Institution</span>
+          <span class="about-card-value">Chalmers University of Technology</span>
+        </div>
+      </div>
+      <div class="about-card-row">
+        <div class="icon">🔬</div>
+        <div>
+          <span class="about-card-label">Focus</span>
+          <span class="about-card-value">AI · Antibiotic Discovery · Peptides</span>
+        </div>
+      </div>
+      <div class="about-card-row">
+        <div class="icon">💻</div>
+        <div>
+          <span class="about-card-label">Degree</span>
+          <span class="about-card-value">MSc Biotechnology (Chalmers)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="js/scripts.min.js"></script>
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
+     EXPERIENCE
+═══════════════════════════════════════ -->
+<section id="experience" class="section">
+  <div class="section-header">
+    <span class="section-tag">02</span>
+    <h2 class="section-title">Experience</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-meta">Chalmers University of Technology · 2025–Present</div>
+      <div class="timeline-title">PhD Student — AI-Assisted Antibiotics Research</div>
+      <div class="timeline-org">Department of Life Sciences</div>
+      <div class="timeline-body">
+        Pursuing a PhD focusing on the discovery of potentiators of antibiotics and the development of
+        an AI framework to guide peptide selection. My work integrates computational modelling, machine
+        learning, and wet-lab experiments with bacteria to identify novel strategies in the fight against
+        antibiotic resistance. Responsibilities also include supervising MSc students and contributing
+        to the academic community through teaching and mentorship.
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-meta">Capgemini Engineering · 2024–2025</div>
+      <div class="timeline-title">Associate CQR Engineer</div>
+      <div class="timeline-org">Compliance, Quality &amp; Regulatory — Newly Started Team</div>
+      <div class="timeline-body">
+        Member of a newly established CQR management team. Handled invoice and case management,
+        and took on responsibility for onboarding and educating new employees in these workflows.
+        Gained hands-on experience with Microsoft Dynamics 365, and completed professional courses in
+        ISO 9001, 13485 &amp; 14001, GCP, GMP, MDR, and project management.
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-meta">Chalmers University of Technology · 2024</div>
+      <div class="timeline-title">Planning Research Project</div>
+      <div class="timeline-org">Biology &amp; Biological Engineering · Food and Nutrition Science</div>
+      <div class="timeline-body">
+        Co-planned a research project investigating whether a specific blood plasma protein
+        influences the risk of developing cognitive decline conditions such as Alzheimer's disease.
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-meta">Chalmers University of Technology · 2023–2024</div>
+      <div class="timeline-title">Master's Thesis in Machine Learning</div>
+      <div class="timeline-org">AIME Lab (AI Laboratory for Molecular Engineering)</div>
+      <div class="timeline-body">
+        Developed a machine learning model utilising contrastive learning to learn an embedding space
+        from single-cell RNA sequencing (scRNA-Seq) data. Applied this space to downstream tasks
+        including cell type annotation and novel cell type detection.
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-meta">AstraZeneca · 2022 &amp; 2023</div>
+      <div class="timeline-title">Statistical Programmer</div>
+      <div class="timeline-org">BioPharmaceuticals R&D · Biometrics · USA &amp; Sweden</div>
+      <div class="timeline-body">
+        Quality controlled variable derivation descriptions across databases using SAS code.
+        Gained expertise in ADAM, SDTM, and RDS databases; organised questionnaires for future
+        drug studies; created SDTM databases for clinical studies.
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-meta">Chalmers University of Technology · 2021–2022</div>
+      <div class="timeline-title">Teaching Assistant</div>
+      <div class="timeline-org">Mathematics Department</div>
+      <div class="timeline-body">
+        TA for linear algebra (MVE465) and single-variable calculus (MVE460). Demonstrated
+        MATLAB-based solutions, assisted students with programming and mathematical concepts,
+        and supported understanding of complex algebraic problems.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
+     EDUCATION
+═══════════════════════════════════════ -->
+<section id="education" class="section">
+  <div class="section-header">
+    <span class="section-tag">03</span>
+    <h2 class="section-title">Education</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="edu-grid">
+
+    <div class="edu-card">
+      <div class="edu-date">Sep 2022 – Jun 2024</div>
+      <div class="edu-degree">MSc in Biotechnology</div>
+      <div class="edu-school">Chalmers University of Technology</div>
+      <div class="edu-desc">Average grade of 4.84 out of 5. Profiling towards life science, bioinformatics, and machine learning.</div>
+      <div class="course-tags">
+        <span class="course-tag">Bioinformatics</span>
+        <span class="course-tag">Machine Learning</span>
+        <span class="course-tag">Life Science</span>
+      </div>
+    </div>
+
+    <div class="edu-card">
+      <div class="edu-date">Sep 2022 – Jun 2023</div>
+      <div class="edu-degree">Freestanding Courses</div>
+      <div class="edu-school">Chalmers University of Technology</div>
+      <div class="edu-desc">Specialisation in AI and bioinformatics.</div>
+      <div class="course-tags">
+        <span class="course-tag">Artificial Neural Networks (FFR135)</span>
+        <span class="course-tag">Advanced ML (TIF360)</span>
+        <span class="course-tag">Applied Bioinformatics (BBT045)</span>
+        <span class="course-tag">Metabolic Engineering (KKR063)</span>
+      </div>
+    </div>
+
+    <div class="edu-card">
+      <div class="edu-date">Sep 2019 – Jun 2022</div>
+      <div class="edu-degree">BSc in Biotechnology</div>
+      <div class="edu-school">Chalmers University of Technology</div>
+      <div class="edu-desc">Average grade of 4.84 out of 5. Foundation in biology, chemistry, mathematics, and computational science.</div>
+      <div class="course-tags">
+        <span class="course-tag">Chemistry</span>
+        <span class="course-tag">Biology</span>
+        <span class="course-tag">Mathematics</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
+     PUBLICATIONS
+═══════════════════════════════════════ -->
+<section id="publications" class="section">
+  <div class="section-header">
+    <span class="section-tag">04</span>
+    <h2 class="section-title">Publications</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="pub-card">
+    <div class="pub-badge">📄</div>
+    <div>
+      <div class="pub-label">Preprint · bioRxiv · 2024</div>
+      <div class="pub-title">Contrastive Learning for Robust Cell Annotation and Representation from Single-Cell Transcriptomics</div>
+      <div class="pub-authors">Leo Andrekson &amp; Rocío Mercado</div>
+      <a href="https://doi.org/10.1101/2024.06.20.599868" target="_blank" class="btn btn-secondary" style="margin-top:0.25rem; font-size:0.68rem; padding: 0.5rem 1.2rem;">
+        View Publication →
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
+     HONORS
+═══════════════════════════════════════ -->
+<section id="honors" class="section">
+  <div class="section-header">
+    <span class="section-tag">05</span>
+    <h2 class="section-title">Honors &amp; Awards</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="honor-card">
+    <div class="honor-icon">🏅</div>
+    <div>
+      <div class="honor-date">September 2023</div>
+      <div class="honor-title">Scholarship — Adlerbert Foundations</div>
+      <div class="honor-sub">Chalmers University of Technology · Awarded based on relative academic excellence, predominantly gauged by weighted average grade.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
+     SKILLS
+═══════════════════════════════════════ -->
+<section id="skills" class="section">
+  <div class="section-header">
+    <span class="section-tag">06</span>
+    <h2 class="section-title">Skills</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="skills-grid">
+
+    <div class="skill-group">
+      <div class="skill-group-title">Programming</div>
+      <div class="skill-pills">
+        <span class="skill-pill">Python</span>
+        <span class="skill-pill">JavaScript</span>
+        <span class="skill-pill">MATLAB</span>
+        <span class="skill-pill">Julia</span>
+        <span class="skill-pill">R</span>
+        <span class="skill-pill">SAS</span>
+        <span class="skill-pill">HTML</span>
+        <span class="skill-pill">CSS</span>
+        <span class="skill-pill">Bash / Shell</span>
+        <span class="skill-pill">Git &amp; GitHub</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title">AI &amp; Data Science</div>
+      <div class="skill-pills">
+        <span class="skill-pill">Machine Learning</span>
+        <span class="skill-pill">Deep Learning</span>
+        <span class="skill-pill">Contrastive Learning</span>
+        <span class="skill-pill">Transformer Models</span>
+        <span class="skill-pill">Bayesian Optimisation</span>
+        <span class="skill-pill">Bioinformatics</span>
+        <span class="skill-pill">scRNA-Seq Analysis</span>
+        <span class="skill-pill">Data Visualisation</span>
+        <span class="skill-pill">HPC / SLURM</span>
+        <span class="skill-pill">PyTorch</span>
+        <span class="skill-pill">scikit-learn</span>
+        <span class="skill-pill">Pandas / NumPy</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title">Microbiology &amp; Wet Lab</div>
+      <div class="skill-pills">
+        <span class="skill-pill">Bacterial Cell Culture</span>
+        <span class="skill-pill">MIC Assays</span>
+        <span class="skill-pill">Antimicrobial Screening</span>
+        <span class="skill-pill">Genetic Modification</span>
+        <span class="skill-pill">Transformation</span>
+        <span class="skill-pill">Sterile Technique</span>
+        <span class="skill-pill">OD Measurement</span>
+        <span class="skill-pill">Multichannel Pipettes</span>
+        <span class="skill-pill">Plate Reader</span>
+        <span class="skill-pill">Microscopy</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title">Analytical &amp; Biochemistry</div>
+      <div class="skill-pills">
+        <span class="skill-pill">HPLC</span>
+        <span class="skill-pill">GC-MS</span>
+        <span class="skill-pill">SDS-PAGE</span>
+        <span class="skill-pill">Gel Electrophoresis</span>
+        <span class="skill-pill">Protein Purification</span>
+        <span class="skill-pill">Chemical Reactions</span>
+        <span class="skill-pill">Spectrophotometry</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title">Quality &amp; Regulatory</div>
+      <div class="skill-pills">
+        <span class="skill-pill">ISO 9001 / 13485 / 14001</span>
+        <span class="skill-pill">GCP &amp; GMP</span>
+        <span class="skill-pill">MDR</span>
+        <span class="skill-pill">Case Management</span>
+        <span class="skill-pill">Invoice Management</span>
+        <span class="skill-pill">Employee Onboarding</span>
+        <span class="skill-pill">Microsoft Dynamics 365</span>
+        <span class="skill-pill">ADAM / SDTM / RDS</span>
+        <span class="skill-pill">Clinical Data Standards</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title">Teaching &amp; Leadership</div>
+      <div class="skill-pills">
+        <span class="skill-pill">MSc Supervision</span>
+        <span class="skill-pill">Academic Mentorship</span>
+        <span class="skill-pill">Staff Training</span>
+        <span class="skill-pill">Technical Instruction</span>
+        <span class="skill-pill">Scientific Writing</span>
+        <span class="skill-pill">Presentation Skills</span>
+        <span class="skill-pill">Project Planning</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title">Languages</div>
+      <div class="skill-pills">
+        <span class="skill-pill">Swedish — Native</span>
+        <span class="skill-pill">English — Fluent</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
+     ALUMNI
+═══════════════════════════════════════ -->
+<section id="alumni" class="section">
+  <div class="section-header">
+    <span class="section-tag">07</span>
+    <h2 class="section-title">Supervised Alumni</h2>
+    <div class="section-line"></div>
+  </div>
+  <p style="color: var(--text-dim); margin-bottom: 2rem; font-size: 0.95rem; max-width: 600px;">
+    Students I have had the privilege of supervising during my PhD. Watching them go on to impactful careers is one of the most rewarding parts of academic life.
+  </p>
+  <div class="alumni-grid">
+
+    <div class="alumni-card">
+      <div class="alumni-avatar">KS</div>
+      <div>
+        <div class="alumni-degree">MSc · Biotechnology</div>
+        <div class="alumni-name">Kasper Storck</div>
+        <div class="alumni-now">Now: <strong>Bioinformatician</strong> at Sahlgrenska University Hospital</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
+     CONTACT
+═══════════════════════════════════════ -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="contact-label">08 · Let's Connect</div>
+    <h2 class="contact-heading">Get in Touch</h2>
+    <p class="contact-sub">
+      Whether you're interested in collaboration, research opportunities,
+      or just want to say hello — my inbox is open.
+    </p>
+    <div class="contact-links">
+      <a href="mailto:leoa0922@gmail.com" class="btn btn-primary">Send Email</a>
+      <a href="https://github.com/LeoAnd00" target="_blank" class="btn btn-secondary">GitHub</a>
+      <a href="https://www.linkedin.com/in/leo-andrekson-2966962b0/" target="_blank" class="btn btn-secondary">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════ -->
+<footer>
+  <span>© 2026 Leo Andrekson</span>
+  <span>Built with purpose &amp; precision</span>
+</footer>
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════ -->
+<script>
+/* ════════════════════════════════════════
+   BACTERIA SPLASH ANIMATION
+════════════════════════════════════════ */
+(function() {
+  const splash = document.getElementById('bacteria-splash');
+  const bc     = document.getElementById('bacteria-canvas');
+  const ctx    = bc.getContext('2d');
+  let W, H, bacteria = [], running = true;
+
+  function resizeB() {
+    W = bc.width  = window.innerWidth;
+    H = bc.height = window.innerHeight;
+  }
+
+  // A single bacterium is a rod (capsule) shape that tumbles and runs
+  class Bacterium {
+    constructor() { this.init(); }
+    init() {
+      this.x     = Math.random() * W;
+      this.y     = Math.random() * H;
+      this.angle = Math.random() * Math.PI * 2;
+      this.speed = 0.4 + Math.random() * 0.6;
+      this.len   = 18 + Math.random() * 28;   // rod length
+      this.r     = 4  + Math.random() * 3;    // rod radius
+      this.tumbleTimer  = 60 + Math.random() * 120; // frames until next tumble
+      this.tumbleFrames = 0;
+      this.tumbling     = false;
+      this.targetAngle  = this.angle;
+      // subtle colour variation – green-teal spectrum
+      const hue = 160 + Math.random() * 30;
+      const sat = 55  + Math.random() * 20;
+      const lig = 38  + Math.random() * 18;
+      this.colour = `hsla(${hue},${sat}%,${lig}%,`;
+      this.alpha  = 0.5 + Math.random() * 0.4;
+      // flagella
+      this.flagella = Array.from({ length: Math.floor(1 + Math.random() * 3) }, () => ({
+        phase: Math.random() * Math.PI * 2,
+        amp: 6 + Math.random() * 10,
+        freq: 0.08 + Math.random() * 0.06,
+        len: 20 + Math.random() * 30,
+      }));
+      this.flagPhase = 0;
+      // division animation
+      this.dividing = false;
+      this.divProgress = 0;
+    }
+
+    update() {
+      // Run-and-tumble motion
+      this.tumbleTimer--;
+      if (this.tumbling) {
+        this.angle += (this.targetAngle - this.angle) * 0.08;
+        this.tumbleFrames--;
+        if (this.tumbleFrames <= 0) {
+          this.tumbling = false;
+          this.tumbleTimer = 80 + Math.random() * 140;
+        }
+      } else if (this.tumbleTimer <= 0) {
+        this.tumbling     = true;
+        this.tumbleFrames = 20 + Math.random() * 30;
+        this.targetAngle  = Math.random() * Math.PI * 2;
+      }
+
+      // Move
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+
+      // Wrap around edges
+      if (this.x < -60)  this.x = W + 60;
+      if (this.x > W+60) this.x = -60;
+      if (this.y < -60)  this.y = H + 60;
+      if (this.y > H+60) this.y = -60;
+
+      this.flagPhase += 0.08;
+    }
+
+    drawCapsule(cx, cy, ang, halfLen, rad, alpha) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(ang);
+
+      const grad = ctx.createLinearGradient(-halfLen, -rad, -halfLen, rad);
+      grad.addColorStop(0,   this.colour + (alpha * 0.4) + ')');
+      grad.addColorStop(0.5, this.colour + alpha + ')');
+      grad.addColorStop(1,   this.colour + (alpha * 0.4) + ')');
+
+      ctx.beginPath();
+      ctx.moveTo(-halfLen, -rad);
+      ctx.lineTo( halfLen, -rad);
+      ctx.arc(halfLen, 0, rad, -Math.PI/2, Math.PI/2);
+      ctx.lineTo(-halfLen, rad);
+      ctx.arc(-halfLen, 0, rad, Math.PI/2, -Math.PI/2);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // inner highlight
+      ctx.beginPath();
+      ctx.ellipse(0, -rad * 0.3, halfLen * 0.6, rad * 0.25, 0, 0, Math.PI * 2);
+      ctx.fillStyle = this.colour + (alpha * 0.3) + ')';
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    drawFlagella(cx, cy, ang) {
+      this.flagella.forEach((f, fi) => {
+        const side   = fi % 2 === 0 ? 1 : -1;
+        const offset = (fi - (this.flagella.length - 1) / 2) * (this.r * 1.2);
+        // attach point at rear of bacterium
+        const attachX = cx + Math.cos(ang + Math.PI) * (this.len/2 + this.r);
+        const attachY = cy + Math.sin(ang + Math.PI) * (this.len/2 + this.r);
+
+        ctx.beginPath();
+        ctx.moveTo(attachX, attachY);
+
+        const steps = 12;
+        for (let i = 1; i <= steps; i++) {
+          const t    = i / steps;
+          const dist = t * f.len;
+          const wave = Math.sin(f.phase + this.flagPhase * f.freq * 60 + t * 5) * f.amp * t;
+          const nx   = attachX + Math.cos(ang + Math.PI) * dist + Math.cos(ang + Math.PI/2) * wave * side;
+          const ny   = attachY + Math.sin(ang + Math.PI) * dist + Math.sin(ang + Math.PI/2) * wave * side;
+          ctx.lineTo(nx, ny);
+        }
+
+        ctx.strokeStyle = this.colour + (this.alpha * 0.35) + ')';
+        ctx.lineWidth   = 0.8;
+        ctx.stroke();
+      });
+    }
+
+    draw() {
+      this.drawFlagella(this.x, this.y, this.angle);
+      this.drawCapsule(this.x, this.y, this.angle, this.len/2, this.r, this.alpha);
+    }
+  }
+
+  function initBacteria() {
+    bacteria = Array.from({ length: 55 }, () => new Bacterium());
+  }
+
+  function animateBacteria() {
+    if (!running) return;
+    ctx.clearRect(0, 0, W, H);
+
+    // Very subtle radial gradient bg glow
+    const grd = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.6);
+    grd.addColorStop(0,   'rgba(10,26,22,0.4)');
+    grd.addColorStop(1,   'rgba(8,13,20,0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+
+    bacteria.forEach(b => { b.update(); b.draw(); });
+    requestAnimationFrame(animateBacteria);
+  }
+
+  resizeB();
+  initBacteria();
+  animateBacteria();
+  window.addEventListener('resize', () => { resizeB(); initBacteria(); });
+
+  // Enter button
+  document.getElementById('splash-enter-btn').addEventListener('click', () => {
+    splash.classList.add('hidden');
+    running = false;
+    setTimeout(() => { splash.style.display = 'none'; }, 950);
+    // scroll to hero
+    document.getElementById('hero').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // Also allow scroll-to-skip
+  let scrolled = false;
+  window.addEventListener('scroll', () => {
+    if (!scrolled && window.scrollY > 40) {
+      scrolled = true;
+      splash.classList.add('hidden');
+      running = false;
+      setTimeout(() => { splash.style.display = 'none'; }, 950);
+    }
+  }, { passive: true });
+})();
+
+/* ════════════════════════════════════════
+   BACKGROUND PARTICLE NETWORK
+════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+
+  class Particle {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x     = Math.random() * W;
+      this.y     = init ? Math.random() * H : H + 10;
+      this.r     = Math.random() * 1.5 + 0.3;
+      this.speed = Math.random() * 0.22 + 0.04;
+      this.drift = (Math.random() - 0.5) * 0.14;
+      this.pulse = Math.random() * Math.PI * 2;
+    }
+    update() {
+      this.y -= this.speed;
+      this.x += this.drift;
+      this.pulse += 0.011;
+      if (this.y < -10) this.reset(false);
+    }
+    draw() {
+      const a = Math.sin(this.pulse) * 0.18 + 0.28;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(80,180,160,${a})`;
+      ctx.fill();
+    }
+  }
+
+  function initP() { particles = Array.from({ length: 85 }, () => new Particle()); }
+
+  function drawLinks() {
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i+1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d  = Math.sqrt(dx*dx+dy*dy);
+        if (d < 115) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(80,180,160,${(1-d/115)*0.07})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+    drawLinks();
+    requestAnimationFrame(animate);
+  }
+
+  resize(); initP(); animate();
+  window.addEventListener('resize', () => { resize(); initP(); });
+})();
+
+/* ════════════════════════════════════════
+   SCROLL REVEAL
+════════════════════════════════════════ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      entry.target.querySelectorAll(
+        '.timeline-item, .edu-card, .skill-group, .honor-card, .pub-card, .alumni-card'
+      ).forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), i * 100);
+      });
+    }
+  });
+}, { threshold: 0.07 });
+
+document.querySelectorAll(
+  '.section, .timeline-item, .edu-card, .skill-group, .honor-card, .pub-card, .alumni-card'
+).forEach(el => observer.observe(el));
+
+/* ════════════════════════════════════════
+   NAV ACTIVE LINK
+════════════════════════════════════════ */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + current ? 'var(--teal)' : '';
+  });
+});
+</script>
+
 </body>
-
 </html>
