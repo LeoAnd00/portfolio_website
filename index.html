@@ -1091,10 +1091,32 @@
     }
 
     update() {
-      // Run-and-tumble motion
       this.tumbleTimer--;
+
+      // --- NEW: Repel from center text column ---
+      if (isBackgroundMode) {
+        // Define the text column boundary (max 1100px wide, or 90% on smaller screens)
+        const contentWidth = Math.min(1100, W * 0.9);
+        const leftWall = (W - contentWidth) / 2;
+        const rightWall = (W + contentWidth) / 2;
+
+        if (this.x > leftWall && this.x < rightWall) {
+          // Steer the bacterium towards the nearest outer edge
+          this.targetAngle = (this.x < W / 2) ? Math.PI : 0;
+          this.tumbling = true;
+          this.tumbleFrames = 15; // Keep forcing the turn while inside the restricted zone
+        }
+      }
+      // ------------------------------------------
+
       if (this.tumbling) {
-        this.angle += (this.targetAngle - this.angle) * 0.08;
+        // Calculate the shortest turn direction to prevent awkward 360-degree spins
+        let diff = this.targetAngle - this.angle;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+
+        this.angle += diff * 0.08;
+        
         this.tumbleFrames--;
         if (this.tumbleFrames <= 0) {
           this.tumbling = false;
@@ -1210,7 +1232,7 @@
     isBackgroundMode = true;
     
     // Reduce bacteria count to 20% (leaves 11 bacteria)
-    const targetCount = Math.floor(bacteria.length * 0.20);
+    const targetCount = Math.floor(bacteria.length * 0.50);
     bacteria.splice(targetCount);
 
     // Move the canvas out of the fading splash div and drop it to the background
