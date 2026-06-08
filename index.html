@@ -1093,24 +1093,33 @@
     update() {
       this.tumbleTimer--;
 
-      // --- NEW: Repel from center text column ---
+      // --- MODIFIED: Only repel if the 'experience' section is currently in view ---
       if (isBackgroundMode) {
-        // Define the text column boundary (max 1100px wide, or 90% on smaller screens)
-        const contentWidth = Math.min(1100, W * 0.9);
-        const leftWall = (W - contentWidth) / 2;
-        const rightWall = (W + contentWidth) / 2;
+        const expSection = document.getElementById('experience');
+        
+        if (expSection) {
+          const rect = expSection.getBoundingClientRect();
+          
+          // Check if the experience section is active (within the viewport)
+          const isExpVisible = rect.top < window.innerHeight && rect.bottom > 0;
 
-        if (this.x > leftWall && this.x < rightWall) {
-          // Steer the bacterium towards the nearest outer edge
-          this.targetAngle = (this.x < W / 2) ? Math.PI : 0;
-          this.tumbling = true;
-          this.tumbleFrames = 15; // Keep forcing the turn while inside the restricted zone
+          if (isExpVisible) {
+            const contentWidth = Math.min(1100, W * 0.9);
+            const leftWall = (W - contentWidth) / 2;
+            const rightWall = (W + contentWidth) / 2;
+
+            // Repel if inside the center column
+            if (this.x > leftWall && this.x < rightWall) {
+              this.targetAngle = (this.x < W / 2) ? Math.PI : 0;
+              this.tumbling = true;
+              this.tumbleFrames = 10; 
+            }
+          }
         }
       }
-      // ------------------------------------------
+      // -------------------------------------------------------------
 
       if (this.tumbling) {
-        // Calculate the shortest turn direction to prevent awkward 360-degree spins
         let diff = this.targetAngle - this.angle;
         while (diff > Math.PI) diff -= Math.PI * 2;
         while (diff < -Math.PI) diff += Math.PI * 2;
@@ -1128,11 +1137,9 @@
         this.targetAngle  = Math.random() * Math.PI * 2;
       }
 
-      // Move
       this.x += Math.cos(this.angle) * this.speed;
       this.y += Math.sin(this.angle) * this.speed;
 
-      // Wrap around edges
       if (this.x < -60)  this.x = W + 60;
       if (this.x > W+60) this.x = -60;
       if (this.y < -60)  this.y = H + 60;
