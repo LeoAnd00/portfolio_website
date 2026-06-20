@@ -272,44 +272,69 @@
       animation: fadeUp 0.9s 0.65s ease forwards;
     }
     
-    /* ── INTEGRATED BIO-FRAME ── */
+    /* ── PETRI-DISH PROFILE FRAME ── */
     .bio-frame {
       position: relative;
-      padding: 12px;
-      background: rgba(24, 34, 48, 0.4);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      box-shadow: inset 0 0 20px rgba(80, 180, 160, 0.05), 0 10px 40px rgba(0, 0, 0, 0.5);
+      width: min(320px, 80vw);
+      aspect-ratio: 1;
+      padding: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 25%, var(--teal-glow), transparent 55%), var(--bg2);
+      border: 1px solid var(--border-hi);
+      box-shadow: inset 0 0 30px rgba(80, 180, 160, 0.07), 0 20px 50px rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(4px);
     }
+    .bio-frame::before {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border-radius: 50%;
+      border: 1px dashed var(--border-hi);
+      animation: spin-dish 50s linear infinite;
+    }
+    @keyframes spin-dish { to { transform: rotate(360deg); } }
     .hero-profile-img {
       display: block;
       width: 100%;
-      max-width: 300px;
-      height: 360px;
+      height: 100%;
       object-fit: cover;
-      border-radius: 10px;
+      border-radius: 50%;
       border: 1px solid rgba(80, 180, 160, 0.2);
       filter: grayscale(15%) contrast(105%); /* Blends photograph tones into the dark theme */
       transition: filter var(--transition), border-color var(--transition);
+      position: relative;
+      z-index: 2;
     }
     .bio-frame:hover .hero-profile-img {
       filter: grayscale(0%) contrast(100%);
       border-color: var(--teal);
     }
 
-    /* Tech-styled corner brackets */
-    .frame-corner {
+    /* Tiny colony specks scattered on the dish rim */
+    .dish-colony {
       position: absolute;
-      width: 10px;
-      height: 10px;
-      border: 2px solid var(--teal);
-      z-index: 2;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 10px var(--teal-glow);
+      z-index: 3;
     }
-    .top-left     { top: -2px; left: -2px; border-right: none; border-bottom: none; }
-    .top-right    { top: -2px; right: -2px; border-left: none; border-bottom: none; }
-    .bottom-left  { bottom: -2px; left: -2px; border-right: none; border-top: none; }
-    .bottom-right { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+    .dish-tag {
+      position: absolute;
+      bottom: 6%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 4;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal);
+      background: rgba(18, 24, 34, 0.85);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      border: 1px solid var(--border-hi);
+      white-space: nowrap;
+    }
 
     /* ── SECTION WRAPPER ── */
     .section {
@@ -398,6 +423,18 @@
     .edu-date { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.75rem; }
     .edu-degree { font-size: 1rem; font-weight: 500; color: var(--heading); margin-bottom: 0.25rem; }
     .edu-school { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 0.75rem; }
+    .edu-grade {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      font-family: var(--mono); font-size: 0.68rem; color: var(--cyan); margin-bottom: 0.85rem;
+    }
+    .edu-grade .bar {
+      width: 70px; height: 4px; border-radius: 2px; background: var(--bg3);
+      overflow: hidden; position: relative;
+    }
+    .edu-grade .bar i {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      background: linear-gradient(90deg, var(--teal-dim), var(--teal));
+    }
     .edu-desc { font-size: 0.82rem; color: var(--text-mute); line-height: 1.65; }
     .course-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
     .course-tag {
@@ -452,7 +489,9 @@
       font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em;
       text-transform: uppercase; color: var(--teal); margin-bottom: 1rem;
       padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
     }
+    .skill-group-title .count { color: var(--text-mute); letter-spacing: 0.05em; }
     .skill-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
     .skill-pill {
       font-family: var(--mono); font-size: 0.72rem; padding: 0.3rem 0.75rem;
@@ -461,7 +500,56 @@
     }
     .skill-pill:hover { border-color: var(--teal); color: var(--cyan); background: var(--teal-glow); }
 
-    /* ── ALUMNI ── */
+    /* ── DISCOVERY LOOP ── */
+    #loop p.loop-intro { font-size: 1.05rem; line-height: 1.85; color: var(--text); max-width: 720px; margin-bottom: 3rem; }
+    .loop-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+    }
+    .loop-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.75rem; position: relative;
+      transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+      opacity: 0; transform: translateY(20px);
+    }
+    .loop-card.visible { opacity: 1; transform: translateY(0); }
+    .loop-card:hover { border-color: var(--border-hi); box-shadow: 0 0 30px var(--teal-glow); transform: translateY(-4px); }
+    .loop-step { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.75rem; }
+    .loop-stage { font-family: var(--serif); font-style: italic; font-size: 1.25rem; color: var(--heading); margin-bottom: 0.6rem; }
+    .loop-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.65; margin-bottom: 0.9rem; }
+    .loop-card .course-tags { margin-top: 0; }
+    .loop-arrow {
+      position: absolute; top: 50%; right: -1.65rem; transform: translateY(-50%);
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--bg); border: 1px solid var(--border-hi);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--teal); font-size: 0.8rem; z-index: 2;
+    }
+    .loop-card:last-child .loop-arrow { display: none; }
+    .loop-return {
+      margin-top: 0.9rem; display: flex; align-items: center; gap: 0.6rem;
+      font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; color: var(--text-mute);
+    }
+    .loop-return .dash { flex: 1; height: 1px; background: repeating-linear-gradient(90deg, var(--border-hi) 0 6px, transparent 6px 12px); }
+
+    @media (max-width: 900px) {
+      .loop-grid { grid-template-columns: 1fr 1fr; }
+      .loop-card:nth-child(2) .loop-arrow { display: none; }
+      .loop-arrow { display: none; }
+    }
+    @media (max-width: 560px) {
+      .loop-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── HONORS — AMBER ── */
+    .honor-card.amber { border-color: rgba(233, 184, 114, 0.18); }
+    .honor-card.amber:hover { box-shadow: 0 0 20px rgba(233, 184, 114, 0.18); border-color: rgba(233, 184, 114, 0.4); }
+    .honor-icon.amber {
+      font-family: var(--serif); font-style: italic; font-size: 1.3rem;
+      color: #e9b872; width: 40px; height: 40px; border-radius: 8px;
+      background: rgba(233, 184, 114, 0.1); border: 1px solid rgba(233, 184, 114, 0.25);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .honor-date.amber { color: #e9b872; }
     .alumni-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
     .alumni-card {
       background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
@@ -563,6 +651,7 @@
   <ul class="nav-links">
     <li><a href="#hero">Home</a></li>
     <li><a href="#about">About</a></li>
+    <li><a href="#loop">Research</a></li>
     <li><a href="#experience">Experience</a></li>
     <li><a href="#education">Education</a></li>
     <li><a href="#publications">Publications</a></li>
@@ -593,12 +682,10 @@
     </div>
 
     <div class="hero-image-wrapper">
-      <div class="bio-frame">
-        <div class="frame-corner top-left"></div>
-        <div class="frame-corner top-right"></div>
-        <div class="frame-corner bottom-left"></div>
-        <div class="frame-corner bottom-right"></div>
-        <img src="profile-image.jpeg" alt="Leo Andrekson" class="hero-profile-img" />
+      <div class="bio-frame" id="bio-dish">
+        <img src="profile-image.jpeg" alt="Leo Andrekson" class="hero-profile-img"
+             onerror="this.style.visibility='hidden'" />
+        <span class="dish-tag">AMR · Peptide Discovery</span>
       </div>
     </div>
 
@@ -680,11 +767,92 @@
 <hr class="divider" />
 
 <!-- ═══════════════════════════════════════
+     DISCOVERY LOOP
+═══════════════════════════════════════ -->
+<section id="loop" class="section">
+  <div class="section-header">
+    <span class="section-tag">02</span>
+    <h2 class="section-title">A Discovery Loop</h2>
+    <div class="section-line"></div>
+  </div>
+  <p class="loop-intro">
+    Most researchers live on one side of the glass — either modelling or at the bench. My PhD is built around
+    closing that gap: predictions become experiments, and experiments retrain the model. Each turn of the loop
+    sharpens the search for compounds that restore the power of failing antibiotics.
+  </p>
+  <div class="loop-grid">
+
+    <div class="loop-card">
+      <div class="loop-step">01 — Model</div>
+      <div class="loop-stage">Learn</div>
+      <div class="loop-desc">
+        Train machine learning model on sequence and assay data using Bayesian optimisation to map what makes a peptide a potentiator.
+      </div>
+      <div class="course-tags">
+        <span class="course-tag">PyTorch</span>
+        <span class="course-tag">PLMs</span>
+        <span class="course-tag">Bayesian Optimisation</span>
+        <span class="course-tag">HPC</span>
+      </div>
+      <div class="loop-arrow">→</div>
+    </div>
+
+    <div class="loop-card">
+      <div class="loop-step">02 — Select</div>
+      <div class="loop-stage">Propose</div>
+      <div class="loop-desc">
+        Use the trained ML framework to rank candidate peptides worth synthesising.
+      </div>
+      <div class="course-tags">
+        <span class="course-tag">ML</span>
+        <span class="course-tag">Embeddings</span>
+        <span class="course-tag">Peptide candidates</span>
+      </div>
+      <div class="loop-arrow">→</div>
+    </div>
+
+    <div class="loop-card">
+      <div class="loop-step">03 — Bench</div>
+      <div class="loop-stage">Test</div>
+      <div class="loop-desc">
+        Validate candidates against live bacteria using MIC, DiSC₃5, and NPN assays to measure membrane disruption.
+      </div>
+      <div class="course-tags">
+        <span class="course-tag">MIC</span>
+        <span class="course-tag">DiSC₃₅</span>
+        <span class="course-tag">NPN</span>
+      </div>
+      <div class="loop-arrow">→</div>
+    </div>
+
+    <div class="loop-card">
+      <div class="loop-step">04 — Data</div>
+      <div class="loop-stage">Refine</div>
+      <div class="loop-desc">
+        Feed wet-lab results back into the model — every measurement makes the next round of predictions better.
+      </div>
+      <div class="course-tags">
+        <span class="course-tag">Analysis</span>
+        <span class="course-tag">Visualisation</span>
+      </div>
+      <div class="loop-return">
+        <span>Retrain</span>
+        <span class="dash"></span>
+        <span>↺ Back to 01</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ═══════════════════════════════════════
      EXPERIENCE
 ═══════════════════════════════════════ -->
 <section id="experience" class="section">
   <div class="section-header">
-    <span class="section-tag">02</span>
+    <span class="section-tag">03</span>
     <h2 class="section-title">Experience</h2>
     <div class="section-line"></div>
   </div>
@@ -774,7 +942,7 @@
 ═══════════════════════════════════════ -->
 <section id="education" class="section">
   <div class="section-header">
-    <span class="section-tag">03</span>
+    <span class="section-tag">04</span>
     <h2 class="section-title">Education</h2>
     <div class="section-line"></div>
   </div>
@@ -784,7 +952,8 @@
       <div class="edu-date">Sep 2022 – Jun 2024</div>
       <div class="edu-degree">MSc in Biotechnology</div>
       <div class="edu-school">Chalmers University of Technology</div>
-      <div class="edu-desc">Average grade of 4.84 out of 5. Profiling towards life science, bioinformatics, and machine learning.</div>
+      <div class="edu-grade"><span class="bar"><i style="width:96.8%"></i></span>4.84 / 5</div>
+      <div class="edu-desc">Profiling towards life science, bioinformatics, and machine learning.</div>
       <div class="course-tags">
         <span class="course-tag">Bioinformatics</span>
         <span class="course-tag">Machine Learning</span>
@@ -796,7 +965,7 @@
       <div class="edu-date">Sep 2022 – Jun 2023</div>
       <div class="edu-degree">Freestanding Courses</div>
       <div class="edu-school">Chalmers University of Technology</div>
-      <div class="edu-desc">Specialisation in AI and bioinformatics.</div>
+      <div class="edu-desc">Deep dive into AI and bioinformatics alongside the master's.</div>
       <div class="course-tags">
         <span class="course-tag">Artificial Neural Networks (FFR135)</span>
         <span class="course-tag">Advanced ML (TIF360)</span>
@@ -809,7 +978,8 @@
       <div class="edu-date">Sep 2019 – Jun 2022</div>
       <div class="edu-degree">BSc in Biotechnology</div>
       <div class="edu-school">Chalmers University of Technology</div>
-      <div class="edu-desc">Average grade of 4.84 out of 5. Foundation in biology, chemistry, mathematics, and computational science.</div>
+      <div class="edu-grade"><span class="bar"><i style="width:96.8%"></i></span>4.84 / 5</div>
+      <div class="edu-desc">Foundation in biology, chemistry, mathematics, and computational science.</div>
       <div class="course-tags">
         <span class="course-tag">Chemistry</span>
         <span class="course-tag">Biology</span>
@@ -827,7 +997,7 @@
 ═══════════════════════════════════════ -->
 <section id="publications" class="section">
   <div class="section-header">
-    <span class="section-tag">04</span>
+    <span class="section-tag">05</span>
     <h2 class="section-title">Publications</h2>
     <div class="section-line"></div>
   </div>
@@ -852,15 +1022,15 @@
 ═══════════════════════════════════════ -->
 <section id="honors" class="section">
   <div class="section-header">
-    <span class="section-tag">05</span>
+    <span class="section-tag">06</span>
     <h2 class="section-title">Honors &amp; Awards</h2>
     <div class="section-line"></div>
   </div>
 
-  <div class="honor-card">
-    <div class="honor-icon">🏅</div>
+  <div class="honor-card amber">
+    <div class="honor-icon amber">★</div>
     <div>
-      <div class="honor-date">September 2023</div>
+      <div class="honor-date amber">September 2023</div>
       <div class="honor-title">Scholarship — Adlerbert Foundations</div>
       <div class="honor-sub">Chalmers University of Technology · Awarded based on relative academic excellence, predominantly gauged by weighted average grade.</div>
     </div>
@@ -874,14 +1044,14 @@
 ═══════════════════════════════════════ -->
 <section id="skills" class="section">
   <div class="section-header">
-    <span class="section-tag">06</span>
+    <span class="section-tag">07</span>
     <h2 class="section-title">Skills</h2>
     <div class="section-line"></div>
   </div>
   <div class="skills-grid">
 
     <div class="skill-group">
-      <div class="skill-group-title">Programming</div>
+      <div class="skill-group-title">Programming<span class="count">11</span></div>
       <div class="skill-pills">
         <span class="skill-pill">Python</span>
         <span class="skill-pill">JavaScript</span>
@@ -898,7 +1068,7 @@
     </div>
 
     <div class="skill-group">
-      <div class="skill-group-title">AI &amp; Data Science</div>
+      <div class="skill-group-title">AI &amp; Data Science<span class="count">15</span></div>
       <div class="skill-pills">
         <span class="skill-pill">Machine Learning</span>
         <span class="skill-pill">Deep Learning</span>
@@ -919,7 +1089,7 @@
     </div>
 
     <div class="skill-group">
-      <div class="skill-group-title">Microbiology &amp; Wet Lab</div>
+      <div class="skill-group-title">Microbiology &amp; Wet Lab<span class="count">12</span></div>
       <div class="skill-pills">
         <span class="skill-pill">Bacterial Cell Culture</span>
         <span class="skill-pill">MIC Assays</span>
@@ -937,7 +1107,7 @@
     </div>
 
     <div class="skill-group">
-      <div class="skill-group-title">Analytical &amp; Biochemistry</div>
+      <div class="skill-group-title">Analytical &amp; Biochemistry<span class="count">07</span></div>
       <div class="skill-pills">
         <span class="skill-pill">HPLC</span>
         <span class="skill-pill">GC-MS</span>
@@ -950,7 +1120,7 @@
     </div>
 
     <div class="skill-group">
-      <div class="skill-group-title">Quality &amp; Regulatory</div>
+      <div class="skill-group-title">Quality &amp; Regulatory<span class="count">09</span></div>
       <div class="skill-pills">
         <span class="skill-pill">ISO 9001 / 13485 / 14001</span>
         <span class="skill-pill">GCP &amp; GMP</span>
@@ -965,7 +1135,7 @@
     </div>
 
     <div class="skill-group">
-      <div class="skill-group-title">Teaching &amp; Leadership</div>
+      <div class="skill-group-title">Teaching &amp; Leadership<span class="count">07</span></div>
       <div class="skill-pills">
         <span class="skill-pill">MSc Supervision</span>
         <span class="skill-pill">Academic Mentorship</span>
@@ -995,7 +1165,7 @@
 ═══════════════════════════════════════ -->
 <section id="alumni" class="section">
   <div class="section-header">
-    <span class="section-tag">07</span>
+    <span class="section-tag">08</span>
     <h2 class="section-title">Supervised Alumni</h2>
     <div class="section-line"></div>
   </div>
@@ -1023,7 +1193,7 @@
 ═══════════════════════════════════════ -->
 <section id="contact">
   <div class="contact-inner">
-    <div class="contact-label">08 · Let's Connect</div>
+    <div class="contact-label">09 · Let's Connect</div>
     <h2 class="contact-heading">Get in Touch</h2>
     <p class="contact-sub">
       Whether you're interested in collaboration, research opportunities,
@@ -1349,7 +1519,7 @@ const observer = new IntersectionObserver((entries) => {
     if (entry.isIntersecting) {
       entry.target.classList.add('visible');
       entry.target.querySelectorAll(
-        '.timeline-item, .edu-card, .skill-group, .honor-card, .pub-card, .alumni-card'
+        '.timeline-item, .edu-card, .skill-group, .honor-card, .pub-card, .alumni-card, .loop-card'
       ).forEach((el, i) => {
         setTimeout(() => el.classList.add('visible'), i * 100);
       });
@@ -1358,7 +1528,7 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.07 });
 
 document.querySelectorAll(
-  '.section, .timeline-item, .edu-card, .skill-group, .honor-card, .pub-card, .alumni-card'
+  '.section, .timeline-item, .edu-card, .skill-group, .honor-card, .pub-card, .alumni-card, .loop-card'
 ).forEach(el => observer.observe(el));
 
 /* ════════════════════════════════════════
