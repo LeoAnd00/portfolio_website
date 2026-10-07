@@ -9,7 +9,7 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <script>document.documentElement.classList.add('js');</script>
   <noscript><style>#bacteria-splash { display: none !important; }</style></noscript>
 
@@ -30,7 +30,7 @@
       --text-mute: #4d6c66;
       --heading:   #eef5f3;
       --spot:      rgba(126,232,212,0.09);
-      --serif:     'Instrument Serif', 'Times New Roman', Times, serif;
+      --display:   'Space Grotesk', 'Outfit', system-ui, sans-serif;
       --mono:      'DM Mono', 'Fira Mono', monospace;
       --sans:      'Outfit', sans-serif;
       --radius:    6px;
@@ -77,17 +77,17 @@
     }
     .splash-content { position: relative; z-index: 2; text-align: center; pointer-events: none; padding: 0 1.5rem; }
     .splash-name {
-      font-family: var(--serif);
-      font-size: clamp(3.2rem, 8vw, 6.8rem);
+      font-family: var(--display); font-weight: 600;
+      font-size: clamp(2.3rem, 7vw, 5.6rem);
       line-height: 1.05;
       color: var(--heading);
-      letter-spacing: 0.01em;
+      letter-spacing: -0.035em;
       margin-bottom: 0.9rem;
       opacity: 0;
       animation: fadeUp 1s 0.4s ease forwards;
     }
-    .splash-name em { color: var(--teal); font-style: italic; }
-    .splash-name .scr { color: var(--teal-dim); font-family: var(--mono); font-size: 0.62em; font-style: normal; }
+    .splash-name em { color: var(--teal); font-style: normal; }
+    .splash-name .scr { color: var(--teal-dim); font-family: var(--mono); font-weight: 400; font-size: 0.7em; letter-spacing: 0; font-style: normal; }
     .splash-role {
       font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase;
       color: var(--teal); opacity: 0; animation: fadeUp 1s 0.85s ease forwards; margin-bottom: 2.5rem;
@@ -124,8 +124,7 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 2.5rem; height: 60px;
-      background: rgba(18, 24, 34, 0.78);
-      backdrop-filter: blur(16px);
+      background: rgba(18, 24, 34, 0.95); /* near-opaque, no live blur: page content must not show through */
       border-bottom: 1px solid var(--border);
     }
     .nav-progress {
@@ -134,9 +133,9 @@
       transform: scaleX(0); transform-origin: left;
       box-shadow: 0 0 12px var(--teal-glow);
     }
-    .nav-logo { font-family: var(--serif); font-size: 1.35rem; color: var(--heading); }
+    .nav-logo { font-family: var(--display); font-weight: 600; font-size: 1.12rem; letter-spacing: -0.02em; color: var(--heading); }
     .nav-logo:hover { color: var(--heading); }
-    .nav-logo span { color: var(--teal); font-style: italic; }
+    .nav-logo span { color: var(--teal); }
     .nav-links { display: flex; gap: 1.6rem; list-style: none; }
     .nav-links a {
       position: relative; display: inline-block; padding: 0.4rem 0;
@@ -176,12 +175,12 @@
       opacity: 0; animation: fadeUp 0.8s 0.2s ease forwards;
     }
     .hero-name {
-      font-family: var(--serif); font-weight: 400;
-      font-size: clamp(3.6rem, 8.5vw, 8rem);
-      line-height: 0.98; color: var(--heading); letter-spacing: -0.01em;
+      font-family: var(--display); font-weight: 600;
+      font-size: clamp(3rem, 7vw, 6rem);
+      line-height: 1; color: var(--heading); letter-spacing: -0.04em;
       opacity: 0; animation: fadeUp 0.9s 0.35s ease forwards;
     }
-    .hero-name em { font-style: italic; color: var(--teal); }
+    .hero-name em { font-style: normal; color: var(--teal); }
     .hero-subtitle {
       margin-top: 1.6rem; font-size: 1.05rem; color: var(--text-dim); max-width: 560px;
       opacity: 0; animation: fadeUp 0.9s 0.5s ease forwards;
@@ -268,7 +267,7 @@
     .section { position: relative; z-index: 1; padding: 6rem 6vw; max-width: 1100px; margin: 0 auto; }
     .section-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 3.5rem; }
     .section-tag { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal); white-space: nowrap; }
-    .section-title { font-family: var(--serif); font-weight: 400; font-size: clamp(2.3rem, 4.4vw, 3.4rem); color: var(--heading); font-style: italic; line-height: 1.1; }
+    .section-title { font-family: var(--display); font-weight: 600; font-size: clamp(1.8rem, 3.2vw, 2.5rem); letter-spacing: -0.03em; color: var(--heading); line-height: 1.1; }
     .section-line {
       flex: 1; height: 1px; margin-left: 0.5rem;
       background: linear-gradient(90deg, var(--border-hi), var(--border) 40%, transparent);
@@ -320,7 +319,7 @@
     .loop-node.active circle { fill: #1d3d3c; stroke: var(--cyan); r: 28px; filter: drop-shadow(0 0 10px rgba(80,180,160,0.45)); }
     .loop-node.active text { fill: var(--cyan); }
     .loop-round { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.22em; fill: var(--text-mute); text-anchor: middle; }
-    .loop-stage-big { font-family: var(--serif); font-style: italic; font-size: 46px; fill: var(--heading); text-anchor: middle; }
+    .loop-stage-big { font-family: var(--display); font-weight: 600; letter-spacing: -0.03em; font-size: 38px; fill: var(--heading); text-anchor: middle; }
     .loop-step-small { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; fill: var(--teal); text-anchor: middle; }
     .loop-centre { transition: opacity 0.25s ease; }
     .loop-centre.swap { opacity: 0; }
@@ -334,7 +333,7 @@
     .loop-card.active { border-color: var(--teal); box-shadow: 0 0 34px var(--teal-glow); }
     .loop-step { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.6rem; transition: color 0.3s ease; }
     .loop-card.active .loop-step { color: var(--cyan); }
-    .loop-stage { font-family: var(--serif); font-style: italic; font-size: 1.5rem; line-height: 1.2; color: var(--heading); margin-bottom: 0.5rem; }
+    .loop-stage { font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; font-size: 1.25rem; line-height: 1.2; color: var(--heading); margin-bottom: 0.5rem; }
     .loop-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.65; margin-bottom: 0.9rem; }
     .loop-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; }
     .loop-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--teal-dim), var(--cyan)); transform: scaleX(0); transform-origin: left; }
@@ -423,7 +422,7 @@
     .honor-card.amber { --spot: rgba(233,184,114,0.08); border-color: rgba(233, 184, 114, 0.18); }
     .honor-card.amber:hover { box-shadow: 0 0 20px rgba(233, 184, 114, 0.18); border-color: rgba(233, 184, 114, 0.4); }
     .honor-icon.amber {
-      font-family: var(--serif); font-style: italic; font-size: 1.3rem;
+      font-family: var(--display); font-size: 1.2rem;
       color: var(--amber); width: 40px; height: 40px; border-radius: 8px;
       background: rgba(233, 184, 114, 0.1); border: 1px solid rgba(233, 184, 114, 0.25);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -492,7 +491,7 @@
       flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%;
       background: var(--teal-glow); border: 1px solid var(--border-hi);
       display: flex; align-items: center; justify-content: center;
-      font-family: var(--serif); font-size: 1.2rem; color: var(--teal); font-style: italic;
+      font-family: var(--display); font-weight: 600; font-size: 1rem; letter-spacing: -0.01em; color: var(--teal);
     }
     .alumni-name { font-size: 1rem; font-weight: 500; color: var(--heading); margin-bottom: 0.2rem; }
     .alumni-degree { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); margin-bottom: 0.4rem; }
@@ -503,7 +502,7 @@
     #contact { text-align: center; padding: 8rem 6vw; position: relative; z-index: 1; }
     .contact-inner { max-width: 580px; margin: 0 auto; }
     .contact-label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 1rem; }
-    .contact-heading { font-family: var(--serif); font-weight: 400; font-size: clamp(2.6rem, 6vw, 4.2rem); color: var(--heading); font-style: italic; margin-bottom: 1rem; line-height: 1.1; }
+    .contact-heading { font-family: var(--display); font-weight: 600; font-size: clamp(2.1rem, 4.6vw, 3.2rem); letter-spacing: -0.035em; color: var(--heading); margin-bottom: 1rem; line-height: 1.1; }
     .contact-sub { color: var(--text-dim); margin-bottom: 2.5rem; font-size: 0.95rem; }
     .contact-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
     .copy-email {
@@ -1303,7 +1302,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
    · Bacteria (teal rods) run-and-tumble, divide, and flee the cursor
    · Antibiotics (amber penicillin skeletons) hunt them; a hit bursts the cell
    · Resistant strains (rose outline) shrug antibiotics off and break them down
-   · Potentiator peptides (pale helices) strip that resistance away
+   · Potentiator peptides (pale helices) bind a resistant cell, strip its resistance, and are used up doing so
    · On the splash, a click releases a volley of antibiotics
 ════════════════════════════════════════ */
 (function () {
@@ -1698,11 +1697,21 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
       this.phase = rand(0, TAU);
       this.alpha = REDUCED ? 1 : 0; this.wait = 0;
       this.target = null; this.retarget = 0;
+      this.bound = null; this.bt = 0; this.off = 0;
     }
     update() {
       if (this.wait > 0) { if (--this.wait <= 0) this.reset(false); return; }
-      this.alpha = Math.min(1, this.alpha + 0.03);
       this.phase += 0.2;
+      if (this.bound) { // bound to a cell: rides along and dissolves into the membrane — used up
+        const b = this.bound;
+        if (b.dead || ++this.bt >= 45) { this.bound = null; this.wait = rand(200, 380); return; }
+        this.x = b.x + Math.cos(b.angle) * this.off;
+        this.y = b.y + Math.sin(b.angle) * this.off;
+        this.angle = b.angle;
+        this.alpha = 1 - this.bt / 45;
+        return;
+      }
+      this.alpha = Math.min(1, this.alpha + 0.03);
       if (--this.retarget <= 0 || !this.target || this.target.dead || this.target.shield < 0.5 || this.target.stripping) {
         let best = null, bd = Infinity;
         for (const b of bacteria) {
@@ -1724,12 +1733,14 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
         t.stripping = true; t.flash = 1;
         ring(this.x, this.y, PALE, 28);
         burst(this.x, this.y, ROSE, 8, 1.6, 6);
-        this.wait = rand(160, 320);
+        const dx = this.x - t.x, dy = this.y - t.y;
+        this.off = clamp(dx * Math.cos(t.angle) + dy * Math.sin(t.angle), -t.len / 2, t.len / 2);
+        this.bound = t; this.bt = 0; this.target = null;
       }
     }
     draw() {
       if (this.wait > 0) return;
-      const c = Math.cos(this.angle), s = Math.sin(this.angle), L = 24, steps = 16;
+      const c = Math.cos(this.angle), s = Math.sin(this.angle), L = 24 * (this.bound ? 0.45 + 0.55 * this.alpha : 1), steps = 16;
       ctx.beginPath();
       for (let i = 0; i <= steps; i++) {
         const t = i / steps, d = (t - 0.5) * L;
@@ -1780,7 +1791,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
     resizeB();
     if (Math.abs(W - lastW) > 80) { lastW = W; initAgents(); } // ignore mobile URL-bar resizes
     updateColumn();
-    if (REDUCED) frame(false);
+    frame(false);
   });
 
   function updateColumn() {
@@ -1960,7 +1971,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   window.addEventListener('resize', () => {
     resize();
     if (Math.abs(W - lastW) > 80) { lastW = W; initP(); }
-    if (REDUCED) render(false);
+    render(false);
   });
 })();
 
@@ -2033,7 +2044,19 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
     toggle.setAttribute('aria-expanded', open);
   }
   toggle.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
-  links.forEach(a => a.addEventListener('click', () => setMenu(false)));
+  // While a menu click is scrolling the page, hold the highlight on the clicked link
+  // instead of letting it flick through every section on the way there.
+  let lock = -1, lockTimer;
+  function release() { if (lock < 0) return; lock = -1; clearTimeout(lockTimer); request(); }
+  links.forEach((a, i) => a.addEventListener('click', () => {
+    setMenu(false);
+    lock = i;
+    clearTimeout(lockTimer);
+    lockTimer = setTimeout(release, 1800);
+    request();
+  }));
+  window.addEventListener('scrollend', release);
+  ['wheel', 'touchstart'].forEach(ev => window.addEventListener(ev, release, { passive: true }));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
 
   let ticking = false;
@@ -2045,6 +2068,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
     let current = 0;
     linked.forEach((s, i) => { if (s.getBoundingClientRect().top <= 140) current = i; });
     if (max > 0 && window.scrollY >= max - 4) current = links.length - 1;
+    if (lock >= 0) current = lock;
     links.forEach((a, i) => a.classList.toggle('active', i === current));
 
     const r = timeline.getBoundingClientRect();
